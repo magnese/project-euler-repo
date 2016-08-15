@@ -1,0 +1,11 @@
+cmake_minimum_required(VERSION 3.1.0 FATAL_ERROR)
+aux_source_directory(. SRC_LIST)
+set(CMAKE_CXX_STANDARD 11)
+list(APPEND CMAKE_CXX_FLAGS "-Wall -pedantic -O3" ${CMAKE_CXX_FLAGS})
+
+file(GLOB SRCFILES *.cpp)
+foreach(sourcefiles ${SRCFILES})
+  get_filename_component(barename ${sourcefiles} NAME)
+  string(REPLACE ".cpp" "_solution" execname ${barename})
+  add_executable(${execname} ${sourcefiles})
+endforeach(sourcefiles ${SRCFILES})
