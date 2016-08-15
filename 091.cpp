@@ -1,40 +1,26 @@
-#include <array>
 #include <cmath>
 #include <iostream>
-#include <tuple>
+
+inline unsigned int gcd(unsigned int a,unsigned int b)
+{
+  return b==0?a:gcd(b,a%b);
+}
 
 int main()
 {
   constexpr unsigned int N(50);
-
-  // generate coordinates
-  std::array<std::pair<unsigned int,unsigned int>,(N+1)*(N+1)> points;
-  auto pointIt(points.begin());
-  for(unsigned int x=0;x<N+1;++x)
-    for(unsigned int y=0;y<N+1;++y)
-    {
-      pointIt->first=x;
-      pointIt->second=y;
-      ++pointIt;
-    }
-
-  // count traingles
-  const double toll(1.e-12);
   unsigned int numTriangles(0);
-  for(const auto& a:points)
-    for(const auto& b:points)
+  for(unsigned int i=1;i<N;++i)
+    for(unsigned int j=1;j<(N+1);++j)
     {
-      const auto& ax(a.first);
-      const auto& ay(a.second);
-      const auto& bx(b.first);
-      const auto& by(b.second);
-      const double c2(std::pow((ax>bx)?ax-bx:bx-ax,2)+std::pow((ay>by)?ay-by:by-ay,2));
-      const double a2(std::pow(ax,2)+std::pow(ay,2));
-      const double b2(std::pow(bx,2)+std::pow(by,2));
-      if((a2>toll)&&(b2>toll)&&(c2>toll))
-        if((std::abs(c2-a2-b2)<toll)||(std::abs(a2-c2-b2)<toll)||(std::abs(b2-a2-c2)<toll))
-          ++numTriangles;
+      // slope of the edge (0,0)--(i,j)
+      const auto d((i>j)?gcd(i,j):gcd(j,i));
+      // number of right traingles with edge pependicular to (0,0)--(i,j) and which live in square (N-i,0)--(N,0)--(N,j)--(N-i,j)
+      numTriangles+=std::min((j*d)/i,((N-i)*d)/j);
     }
-  numTriangles/=2;
-  std::cout<<"Number rectangular traingles = "<<numTriangles<<std::endl;
+  // symmetrize
+  numTriangles*=2;
+  // add numebr of triangles with right angle in the origin or on the edge of the square
+  numTriangles+=3*std::pow(N,2);
+  std::cout<<"Number rectangular triangles = "<<numTriangles<<std::endl;
 }
