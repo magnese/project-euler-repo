@@ -1,4 +1,5 @@
-*_solution
+*
+!*.*
 Makefile
 CMakeCache.txt
 CMakeFiles/
